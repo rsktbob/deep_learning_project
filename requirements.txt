@@ -1,0 +1,31 @@
+# Web application
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+pydantic>=2.7,<3
+
+# Data and plotting
+numpy>=1.26,<2
+pandas>=2.0,<3
+scipy>=1.11,<2
+scikit-learn>=1.3,<2
+matplotlib>=3.8,<4
+pandas-market-calendars>=4.4,<6
+stockstats>=0.6,<1
+yfinance>=0.2.54,<1
+
+# Reinforcement learning
+gymnasium>=0.29.1,<1.1
+stable-baselines3[extra]>=2.3.2,<3
+sb3-contrib>=2.3.0,<3
+torch>=2.2,<3
+tensorboard>=2.16,<3
+finrl>=0.3.7,<0.4
+
+# Backtest utilities used by FinRL
+pyfolio-reloaded>=0.9.9
+PyPortfolioOpt>=1.5,<2
+alpaca-trade-api>=3,<4
+wrds>=3.2,<4
+
+# Install native dependencies first with Conda:
+# conda install -c conda-forge swig ta-lib -y

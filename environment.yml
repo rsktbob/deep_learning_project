@@ -1,0 +1,11 @@
+name: finrl-tw
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - swig
+  - ta-lib
+  - pip:
+      - -r requirements.txt

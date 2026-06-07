@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Taiwan FinRL Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">TW</span>
+      <div><strong>Taiwan FinRL Lab</strong><small>台股深度強化學習研究台</small></div>
+    </div>
+    <div class="top-meta">
+      <span id="dependencyBadge" class="pill">檢查環境中</span>
+      <span id="clock"></span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <section>
+        <div class="section-heading"><span>01</span> 股票池</div>
+        <label class="search"><span>⌕</span><input id="stockSearch" placeholder="搜尋代碼、公司或產業"></label>
+        <div class="selection-summary"><strong id="selectedCount">0</strong> / 30 檔已選 <button id="selectTop10" type="button">重設前十</button></div>
+        <div id="stockList" class="stock-list"></div>
+      </section>
+
+      <section>
+        <div class="section-heading"><span>02</span> 資料區間</div>
+        <div class="field-grid">
+          <label>訓練開始<input id="trainStart" type="date" value="2018-01-01"></label>
+          <label>回測開始<input id="tradeStart" type="date" value="2024-01-01"></label>
+          <label class="wide">回測結束<input id="tradeEnd" type="date" value="2026-06-01"></label>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading"><span>03</span> 訓練參數</div>
+        <div class="field-grid">
+          <label>Timesteps<input id="timesteps" type="number" value="20000" min="1000" step="1000"></label>
+          <label>Learning rate<input id="learningRate" type="number" value="0.00025" min="0.000001" step="0.00001"></label>
+          <label>n_steps<input id="nSteps" type="number" value="2048" min="5" step="1"></label>
+          <label>Batch size<select id="batchSize"><option>32</option><option>64</option><option>100</option><option selected>128</option><option>256</option><option>512</option></select></label>
+        </div>
+      </section>
+
+      <button id="trainButton" class="train-button" type="button"><span>▶</span> 開始訓練與回測</button>
+      <p class="disclaimer">研究用途，不構成投資建議。訓練工作會在本機背景執行。</p>
+    </aside>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">TAIWAN EQUITY · FINRL</p>
+          <h1>深度強化學習<br><em>探索台股策略</em></h1>
+          <p class="hero-copy">從大型權值股建立環境，統一比較傳統 Actor-Critic、循環網路與 Mamba 狀態空間模型。</p>
+        </div>
+        <div class="hero-orbit">
+          <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+          <div class="orbit-core"><span id="activeAlgoShort">PPO</span><small>ACTIVE MODEL</small></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="content-heading"><div><span>模型選擇</span><h2>演算法工作台</h2></div><p id="algoDescription"></p></div>
+        <div id="algorithmGrid" class="algorithm-grid"></div>
+      </section>
+
+      <section class="status-panel">
+        <div class="status-copy">
+          <span id="jobStatus" class="job-status idle">IDLE</span>
+          <h2 id="jobStage">準備建立第一個台股策略</h2>
+          <p id="jobDetail">選擇股票與模型後開始訓練，結果會顯示在下方。</p>
+        </div>
+        <div class="progress-ring" id="progressRing"><strong id="progressValue">0%</strong><small>PROGRESS</small></div>
+      </section>
+
+      <section class="metrics-grid">
+        <article><span>總報酬</span><strong id="metricReturn">--</strong><small>TOTAL RETURN</small></article>
+        <article><span>夏普比率</span><strong id="metricSharpe">--</strong><small>SHARPE RATIO</small></article>
+        <article><span>最大回撤</span><strong id="metricDrawdown">--</strong><small>MAX DRAWDOWN</small></article>
+        <article><span>正報酬日</span><strong id="metricWinRate">--</strong><small>POSITIVE DAYS</small></article>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="panel chart-panel wide-panel">
+          <div class="panel-heading"><div><span>回測曲線</span><h3>投資組合價值</h3></div><div class="legend"><i></i>RL Agent <i></i>等權買入持有</div></div>
+          <canvas id="returnChart"></canvas>
+          <div id="chartEmpty" class="empty-state">完成一次訓練後顯示真實回測曲線</div>
+        </article>
+        <article class="panel trade-detail-panel">
+          <div class="panel-heading">
+            <div><span>DAILY PORTFOLIO</span><h3>每日交易與持股列表</h3></div>
+            <label class="date-picker">選擇交易日<select id="snapshotDate" disabled><option>尚無回測資料</option></select></label>
+          </div>
+          <div class="snapshot-summary">
+            <div><span>現金</span><strong id="snapshotCash">--</strong><small id="snapshotCashWeight">--</small></div>
+            <div><span>股票市值</span><strong id="snapshotStockValue">--</strong><small>MARKET VALUE</small></div>
+            <div><span>總資產</span><strong id="snapshotTotalValue">--</strong><small>CASH + STOCKS</small></div>
+          </div>
+          <div class="trade-table-wrap">
+            <table class="trade-table">
+              <thead><tr><th>股票</th><th>決策</th><th>成交股數</th><th>目前持股</th><th>當日價格</th><th>持股市值</th><th>持股比例</th></tr></thead>
+              <tbody id="snapshotRows"><tr><td colspan="7" class="table-empty">完成回測後可依日期查看每日明細</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+        <article class="panel log-panel">
+          <div class="panel-heading"><div><span>BACKGROUND JOB</span><h3>執行紀錄</h3></div></div>
+          <div id="logList" class="log-list"><p><time>--:--:--</time><span>等待開始訓練</span></p></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
