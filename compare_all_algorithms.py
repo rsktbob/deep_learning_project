@@ -12,6 +12,7 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -124,51 +125,56 @@ def plot_comparison(
     """Save portfolio-value and normalized-return comparison charts."""
     labels = {key: value["label"] for key, value in ALGORITHMS.items()}
     labels["buy_hold"] = "Equal-Weight Buy & Hold"
+    x_values = pd.to_datetime(comparison.index)
 
     value_path = output_dir / "all_algorithms_portfolio_value.png"
     return_path = output_dir / "all_algorithms_cumulative_return.png"
 
-    plt.figure(figsize=(16, 9))
+    fig, ax = plt.subplots(figsize=(16, 9))
     for column in comparison.columns:
-        plt.plot(
-            comparison.index,
+        ax.plot(
+            x_values,
             comparison[column],
             label=labels[column],
             color=COLORS[column],
             linewidth=2.4 if column == "buy_hold" else 1.5,
             linestyle="--" if column == "buy_hold" else "-",
         )
-    plt.title("Taiwan Stock RL Algorithms - Portfolio Value")
-    plt.xlabel("Backtest Date")
-    plt.ylabel("Portfolio Value (TWD)")
-    plt.legend(ncol=3)
-    plt.grid(alpha=0.2)
-    plt.xticks(rotation=35)
-    plt.tight_layout()
-    plt.savefig(value_path, dpi=180, bbox_inches="tight")
-    plt.close()
+    ax.set_title("Taiwan Stock RL Algorithms - Portfolio Value")
+    ax.set_xlabel("Backtest Date")
+    ax.set_ylabel("Portfolio Value (TWD)")
+    ax.legend(ncol=3)
+    ax.grid(alpha=0.2)
+    ax.xaxis.set_major_locator(mdates.AutoDateLocator(minticks=6, maxticks=10))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
+    fig.autofmt_xdate(rotation=35, ha="right")
+    fig.tight_layout()
+    fig.savefig(value_path, dpi=180, bbox_inches="tight")
+    plt.close(fig)
 
     normalized = comparison.div(comparison.iloc[0]).sub(1).mul(100)
-    plt.figure(figsize=(16, 9))
+    fig, ax = plt.subplots(figsize=(16, 9))
     for column in normalized.columns:
-        plt.plot(
-            normalized.index,
+        ax.plot(
+            x_values,
             normalized[column],
             label=labels[column],
             color=COLORS[column],
             linewidth=2.4 if column == "buy_hold" else 1.5,
             linestyle="--" if column == "buy_hold" else "-",
         )
-    plt.axhline(0, color="#777777", linewidth=0.8)
-    plt.title("Taiwan Stock RL Algorithms - Cumulative Return")
-    plt.xlabel("Backtest Date")
-    plt.ylabel("Cumulative Return (%)")
-    plt.legend(ncol=3)
-    plt.grid(alpha=0.2)
-    plt.xticks(rotation=35)
-    plt.tight_layout()
-    plt.savefig(return_path, dpi=180, bbox_inches="tight")
-    plt.close()
+    ax.axhline(0, color="#777777", linewidth=0.8)
+    ax.set_title("Taiwan Stock RL Algorithms - Cumulative Return")
+    ax.set_xlabel("Backtest Date")
+    ax.set_ylabel("Cumulative Return (%)")
+    ax.legend(ncol=3)
+    ax.grid(alpha=0.2)
+    ax.xaxis.set_major_locator(mdates.AutoDateLocator(minticks=6, maxticks=10))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
+    fig.autofmt_xdate(rotation=35, ha="right")
+    fig.tight_layout()
+    fig.savefig(return_path, dpi=180, bbox_inches="tight")
+    plt.close(fig)
     return value_path, return_path
 
 
