@@ -1,6 +1,6 @@
 # Taiwan FinRL Lab
 
-這個專案將原本的美股 FinRL 範例改成台股大型代表股，並提供本機網頁儀表板，用來比較多種深度強化學習交易模型在台股投資組合上的表現。
+這個專案使用finrl所提供的環境，用來比較多種深度強化學習交易模型在台股投資組合上的表現。
 
 支援演算法：
 
@@ -169,20 +169,14 @@ PPO、TD3、SAC 參考 `FinRL_StockTrading_2026_2_train.py`；A2C、DDPG 使用 
 ## 建立環境
 
 ```powershell
-conda env create -f environment.yml
-conda activate finrl-tw
-```
-
-也可以使用 `requirements.txt` 安裝套件：
-
-```powershell
+conda create -n finrlenv python=3.10
 pip install -r requirements.txt
 ```
 
 ## 啟動網頁
 
 ```powershell
-conda activate finrl-tw
+conda activate finrlenv
 uvicorn app:app --host 127.0.0.1 --port 8000
 ```
 
