@@ -152,10 +152,7 @@ Reward 來自投資組合總價值變化：
 總資產 = 現金 + 所有股票市值
 ```
 
-## 演算法預設參數
-
-PPO、TD3、SAC 參考 `FinRL_StockTrading_2026_2_train.py`；A2C、DDPG 使用 FinRL / Stable-Baselines3 預設；PPO + LSTM 與 PPO + Mamba 使用較保守的序列模型設定。
-
+## 演算法參數
 | 演算法 | learning_rate | n_steps | batch_size | 其他主要設定 |
 |---|---:|---:|---:|---|
 | PPO | 0.00025 | 2048 | 128 | `ent_coef=0.01` |
